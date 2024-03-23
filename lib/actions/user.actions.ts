@@ -7,6 +7,7 @@ import { CreateUserParams, UpdateUserParams } from "@/types";
 import User from "../database/models/user.models";
 import { revalidatePath } from "next/cache";
 import Order from "../database/models/order.Model";
+import Event from "../database/models/event.models";
 
 export async function createUser(user: CreateUserParams) {
   try {
