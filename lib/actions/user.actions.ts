@@ -8,7 +8,7 @@ import Event from "@/lib/database/models/event.models";
 import { handleError } from "@/lib/utils";
 
 import { CreateUserParams, UpdateUserParams } from "@/types";
-import { connectToDatabase } from "../database";
+import { connectToDatabase } from "@/lib/database";
 
 export async function createUser(user: CreateUserParams) {
   try {

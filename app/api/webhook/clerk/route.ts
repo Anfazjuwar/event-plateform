@@ -54,54 +54,80 @@ export async function POST(req: Request) {
   // Get the ID and type
   const { id } = evt.data;
   const eventType = evt.type;
-
   if (eventType === "user.created") {
-    const { id, email_addresses, image_url, first_name, last_name, username } =
-      evt.data;
+    try {
+      const {
+        id,
+        email_addresses,
+        image_url,
+        first_name,
+        last_name,
+        username,
+      } = evt.data;
 
-    const user = {
-      clerkId: id,
-      email: email_addresses[0].email_address,
-      username: username!,
-      firstName: first_name,
-      lastName: last_name,
-      photo: image_url,
-    };
+      const user = {
+        clerkId: id,
+        email: email_addresses[0].email_address,
+        username: username!,
+        firstName: first_name,
+        lastName: last_name,
+        photo: image_url,
+      };
 
-    const newUser = await createUser(user);
+      // Await createUser function
+      const newUser = await createUser(user);
 
-    if (newUser) {
-      await clerkClient.users.updateUserMetadata(id, {
-        publicMetadata: {
-          userId: newUser._id,
-        },
-      });
+      if (newUser) {
+        await clerkClient.users.updateUserMetadata(id, {
+          publicMetadata: {
+            userId: newUser._id,
+          },
+        });
+      }
+
+      // Return the response after awaiting createUser
+      return NextResponse.json({ message: "OK", user: newUser });
+    } catch (error) {
+      console.error("Error creating user:", error);
+      return new Response("Error occurred", { status: 500 });
     }
-
-    return NextResponse.json({ message: "OK", user: newUser });
   }
 
   if (eventType === "user.updated") {
-    const { id, image_url, first_name, last_name, username } = evt.data;
+    try {
+      const { id, image_url, first_name, last_name, username } = evt.data;
 
-    const user = {
-      firstName: first_name,
-      lastName: last_name,
-      username: username!,
-      photo: image_url,
-    };
+      const user = {
+        firstName: first_name,
+        lastName: last_name,
+        username: username!,
+        photo: image_url,
+      };
 
-    const updatedUser = await updateUser(id, user);
+      // Await updateUser function
+      const updatedUser = await updateUser(id, user);
 
-    return NextResponse.json({ message: "OK", user: updatedUser });
+      // Return the response after awaiting updateUser
+      return NextResponse.json({ message: "OK", user: updatedUser });
+    } catch (error) {
+      console.error("Error updating user:", error);
+      return new Response("Error occurred", { status: 500 });
+    }
   }
 
   if (eventType === "user.deleted") {
-    const { id } = evt.data;
+    try {
+      const { id } = evt.data;
 
-    const deletedUser = await deleteUser(id!);
+      // Await deleteUser function
+      const deletedUser = await deleteUser(id!);
 
-    return NextResponse.json({ message: "OK", user: deletedUser });
+      // Return the response after awaiting deleteUser
+      return NextResponse.json({ message: "OK", user: deletedUser });
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      return new Response("Error occurred", { status: 500 });
+    }
   }
 
   return new Response("", { status: 200 });
