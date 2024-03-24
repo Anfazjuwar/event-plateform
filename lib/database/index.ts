@@ -16,6 +16,7 @@ export const connectToDatabase = async () => {
       bufferCommands: false,
     });
 
+  console.log(`Successfully connnected to mongoDB 👍`);
   cached.conn = await cached.promise;
 
   return cached.conn;
